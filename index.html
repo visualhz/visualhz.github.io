@@ -71,9 +71,9 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nvidia-passthru" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-nvidia-passthru/nvidia-passthru" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/06/01/nvidia-passthru/" class="article-date">
+    <a href="/2021/06/01/nvidia-passthru/nvidia-passthru/" class="article-date">
   <time class="dt-published" datetime="2021-06-01T07:25:25.250Z" itemprop="datePublished">2021-06-01</time>
 </a>
     
@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/06/01/nvidia-passthru/">vSphere6.5+gpu直通+centos7+nvidia驱动</a>
+      <a class="p-name article-title" href="/2021/06/01/nvidia-passthru/nvidia-passthru/">vSphere6.5+gpu直通+centos7+nvidia驱动</a>
     </h1>
   
 
@@ -94,18 +94,18 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="1-vSphere配置gpu直通"><a href="#1-vSphere配置gpu直通" class="headerlink" title="1.vSphere配置gpu直通"></a>1.vSphere配置gpu直通</h2><p>在vSphere中配置显卡直通，ESXI机器将需要进入维护模式并重新引导</p>
-<p><img src="../img/image-20210601153252871.png" alt="image-20210601153252871"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601153252871.png" alt="image-20210601153252871"></p>
 <hr>
 <h2 id="2-虚拟机配置"><a href="#2-虚拟机配置" class="headerlink" title="2.虚拟机配置"></a>2.虚拟机配置</h2><p>配置虚拟机前，请先查看GPU兼容性列表（<a target="_blank" rel="noopener" href="https://www.vmware.com/resources/compatibility/search.php?deviceCategory=sptg">GPU直通兼容性查询</a>）</p>
 <p>创建虚拟机，系统选择为centos7，其中**最小内存为GPU显存总大小的1.5倍(如此处使用GPU为P100，其显存为16GB，则最小内存大小为24GB)**。</p>
 <p>添加新PCI设备，并选择gpu设备进行添加，注意勾选<strong>预留所有客户机内存(全部锁定)</strong></p>
-<p><img src="../img/image-20210601153545092.png" alt="image-20210601153545092"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601153545092.png" alt="image-20210601153545092"></p>
 <p>依据<a target="_blank" rel="noopener" href="https://docs.vmware.com/cn/VMware-vSphere-Bitfusion/3.0/Install-Guide/GUID-2005A8C6-4FDC-46DF-BB6B-989F6E91F3E2.html">官方文档</a>：</p>
 <ul>
 <li>如果 GPU 需要 16 GB 或更多的内存映射，请在 ESXi 主机的 BIOS 设置中为 GPU 启用直通（通常情况下，设置的名称为 Above 4G decoding、Memory mapped I/O above 4GB 或 PCI 64-bit resource handing above 4G）</li>
 <li>在虚拟机的引导选项中启用 UEFI 或 EFI</li>
 </ul>
-<p><img src="../img/image-20210601155502259.png" alt="image-20210601155502259"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601155502259.png" alt="image-20210601155502259"></p>
 <p>在高级设置中为虚拟机添加参数：</p>
 <ul>
 <li><p><code>hypervisor.cpuid.v0 = FALSE</code>（不添加此参数可能会导致驱动安装后找不到显卡）</p>
@@ -113,7 +113,7 @@
 <li><p><code>pciPassthru.use64bitMMIO = TRUE</code>（不添加此参数可能导致虚拟机无法开机或开机黑屏）</p>
 </li>
 <li><p><code>pciPassthru.64bitMMIOSizeGB = 48</code>（以P100为例，此处应当填写32即可）</p>
-<p><img src="../img/image-20210601162211405.png" alt="image-20210601162211405"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601162211405.png" alt="image-20210601162211405"></p>
 </li>
 </ul>
 <p>其中<code>pciPassthru.64bitMMIOSizeGB</code>的数值取决于GPU显存的总和，具体来说</p>
@@ -127,35 +127,35 @@
 
 
 
-<p><img src="../img/image-20210601162926014.png" alt="image-20210601162926014"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601162926014.png" alt="image-20210601162926014"></p>
 <h3 id="3-2配置yum镜像源"><a href="#3-2配置yum镜像源" class="headerlink" title="3.2配置yum镜像源"></a>3.2配置yum镜像源</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure>
 
 <h3 id="3-3依赖环境安装"><a href="#3-3依赖环境安装" class="headerlink" title="3.3依赖环境安装"></a>3.3依赖环境安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install kernel-devel gcc -y</span><br></pre></td></tr></table></figure>
 
 <h3 id="3-4检查内核版本和源码版本是否一致"><a href="#3-4检查内核版本和源码版本是否一致" class="headerlink" title="3.4检查内核版本和源码版本是否一致"></a>3.4检查内核版本和源码版本是否一致</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /boot | grep vmlinu</span><br><span class="line">rpm -aq | grep kernel-devel</span><br></pre></td></tr></table></figure>
 
-<p><img src="../img/image-20210601163415060.png" alt="image-20210601163415060"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601163415060.png" alt="image-20210601163415060"></p>
 <h3 id="3-5屏蔽系统自带的nouveau"><a href="#3-5屏蔽系统自带的nouveau" class="headerlink" title="3.5屏蔽系统自带的nouveau"></a>3.5屏蔽系统自带的nouveau</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim /lib/modprobe.d/dist-blacklist.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 注释nvidiafb:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">blacklist nvidiafb</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 并添加语句：</span></span><br><span class="line">blacklist nouveau</span><br><span class="line">options nouveau modeset=0</span><br></pre></td></tr></table></figure>
 
-<p><img src="../img/image-20210601163554291.png" alt="image-20210601163554291"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601163554291.png" alt="image-20210601163554291"></p>
 <h3 id="3-6重建initramfs-image"><a href="#3-6重建initramfs-image" class="headerlink" title="3.6重建initramfs image"></a>3.6重建initramfs image</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r).img.bak</span><br><span class="line">dracut /boot/initramfs-$(uname -r).img $(uname -r)</span><br></pre></td></tr></table></figure>
 
 <h3 id="3-7验证准备完成"><a href="#3-7验证准备完成" class="headerlink" title="3.7验证准备完成"></a>3.7验证准备完成</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">修改运行级别为文本模式</span></span><br><span class="line">systemctl set-default multi-user.target</span><br><span class="line"><span class="meta">#</span><span class="bash">重新启动</span></span><br><span class="line">reboot</span><br><span class="line"><span class="meta">#</span><span class="bash">验证是否已屏蔽系统驱动</span></span><br><span class="line">lsmod | grep nouveau</span><br></pre></td></tr></table></figure>
 
-<p><img src="../img/image-20210601164107618.png" alt="image-20210601164107618"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601164107618.png" alt="image-20210601164107618"></p>
 <h3 id="3-8nvidia官网下载驱动"><a href="#3-8nvidia官网下载驱动" class="headerlink" title="3.8nvidia官网下载驱动"></a>3.8nvidia官网下载驱动</h3><p><a target="_blank" rel="noopener" href="https://www.nvidia.cn/Download/index.aspx?lang=cn">NVIDIA驱动程序下载</a></p>
-<p><img src="../img/image-20210601164239105.png" alt="image-20210601164239105"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601164239105.png" alt="image-20210601164239105"></p>
 <h3 id="3-9安装驱动"><a href="#3-9安装驱动" class="headerlink" title="3.9安装驱动"></a>3.9安装驱动</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x NVIDIA-Linux-x86_64-460.73.01.run</span><br><span class="line">./NVIDIA-Linux-x86_64-460.73.01.run --kernel-source-path=/usr/src/kernels/3.10.0-1160.25.1.el7.x86_64/ --no-opengl-files -k $(uname -r)</span><br></pre></td></tr></table></figure>
 
 <p><strong>注意安装过程中提示是否修改X config，选择否</strong>（选择是将会导致桌面无法显示）</p>
 <h3 id="3-10验证安装成功"><a href="#3-10验证安装成功" class="headerlink" title="3.10验证安装成功"></a>3.10验证安装成功</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
 
-<p><img src="../img/image-20210601164659462.png" alt="image-20210601164659462"></p>
+<p><img src="/2021/06/01/nvidia-passthru/nvidia-passthru/image-20210601164659462.png" alt="image-20210601164659462"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://visualhz.github.io/2021/06/01/nvidia-passthru/" data-id="ckpdswzod000148im54zqferz" data-title="vSphere6.5+gpu直通+centos7+nvidia驱动" class="article-share-link">Teilen</a>
+      <a data-url="https://visualhz.github.io/2021/06/01/nvidia-passthru/nvidia-passthru/" data-id="ckpdta1l4000158imcomp1m0k" data-title="vSphere6.5+gpu直通+centos7+nvidia驱动" class="article-share-link">Teilen</a>
       
       
       
@@ -206,7 +206,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://visualhz.github.io/2021/05/31/hello-world/" data-id="ckpdswzo9000048im7x8o9yf7" data-title="Hello World" class="article-share-link">Teilen</a>
+      <a data-url="https://visualhz.github.io/2021/05/31/hello-world/" data-id="ckpdta1kz000058im2a7w4o1m" data-title="Hello World" class="article-share-link">Teilen</a>
       
       
       
@@ -249,7 +249,7 @@
       <ul>
         
           <li>
-            <a href="/2021/06/01/nvidia-passthru/">vSphere6.5+gpu直通+centos7+nvidia驱动</a>
+            <a href="/2021/06/01/nvidia-passthru/nvidia-passthru/">vSphere6.5+gpu直通+centos7+nvidia驱动</a>
           </li>
         
           <li>
